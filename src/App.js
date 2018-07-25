@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
-import {Container, Button} from 'semantic-ui-react';
+import {Container, Button, Dropdown} from 'semantic-ui-react';
 import Body from './components/Body';
 import MyModal from './components/MyModal';
-import UserTable from './components/Body';
 
 class App extends Component {
   state = {
@@ -14,7 +13,7 @@ class App extends Component {
         fullName: 'rizwan',
         dob: new Date (),
         number: '551351654065',
-        category: 'something',
+        category: 'friend',
         selected: false,
       },
       {
@@ -22,7 +21,7 @@ class App extends Component {
         fullName: 'john cena',
         dob: new Date (),
         number: '546841351684',
-        category: 'something',
+        category: 'family',
         selected: false,
       },
       {
@@ -30,7 +29,7 @@ class App extends Component {
         fullName: 'big show',
         dob: new Date (),
         number: '654646546841',
-        category: 'something',
+        category: 'friend',
         selected: false,
       },
       {
@@ -38,7 +37,7 @@ class App extends Component {
         fullName: 'Matt hardy',
         dob: new Date (),
         number: '546841351684',
-        category: 'something',
+        category: 'family',
         selected: false,
       },
       {
@@ -46,11 +45,12 @@ class App extends Component {
         fullName: 'tripple H',
         dob: new Date (),
         number: '654624254487',
-        category: 'something',
+        category: 'friend',
         selected: false,
       },
     ],
     updateuser: null,
+    sort:''
   };
   openModal = () => this.setState ({modal: true});
   closeModal = () => this.setState ({modal: false});
@@ -94,8 +94,16 @@ class App extends Component {
       }
       return use;
     });
+    this.setState({users})
   };
+  onDropdownChange=(e,{value})=>{
+     this.setState({sort:value})
+  }
   render () {
+   let users = this.state.users.filter (user => {
+    let name = user.category.toLowerCase ();
+    return name.indexOf (this.state.sort.toLowerCase ()) !== -1;
+  });
     return (
       <Container text style={styles.container}>
         <div style={styles.buttonContainer}>
@@ -108,8 +116,9 @@ class App extends Component {
           <Button style={styles.button} onClick={() => this.deleteUser ()}>
             Delete Contact
           </Button>
+          <Dropdown placeholder='Sort By' onChange={this.onDropdownChange.bind(this)} fluid selection options={friendOptions} style={{width:200,margin:3}}/>
         </div>
-        <Body users={this.state.users} selecteUser={this.selecteUser} />
+        <Body users={users} selecteUser={this.selecteUser} />
         {this.state.modal
           ? <MyModal
               modal={this.state.modal}
@@ -139,3 +148,18 @@ const styles = {
     margin: 2,
   },
 };
+
+const friendOptions = [
+  {
+    text: 'Sort',
+    value: '',
+  },
+  {
+    text: 'friend',
+    value: 'friend',
+  },
+  {
+    text: 'family',
+    value: 'family',
+  },
+]
